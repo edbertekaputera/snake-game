@@ -37,6 +37,7 @@ while game_running:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			game_running = False
+		print(event)
 	screen.blit(background, (0,0))
 	pygame.display.update()
 
