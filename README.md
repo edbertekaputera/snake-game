@@ -11,4 +11,6 @@ This program is require multiple libraries (like pygame, etc)
 To run this program in your terminal, please install the required libraries which has been supplied in the requirement.txt FILE.
 
 To ease the installation process, you can type the following in your terminal...
-#   pip install -r requirements.txt
+###   pip3 install -r requirements.txt
+or
+### pip install -r requirements.txt
