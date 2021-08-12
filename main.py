@@ -36,9 +36,6 @@ for x in range(5, FIELD_WIDTH+5, 30):
    			bg_color = LIGHT_GREEN
 pygame.draw.rect(background, ORANGE, [0,FIELD_HEIGHT+10, SCOREBOARD_WIDTH, SCOREBOARD_HEIGHT])
 
-#Scoreboard
-score = 0
-
 #Fonts
 font_base = pygame.font.Font(None, 50)
 
@@ -116,7 +113,7 @@ while game_running:
 		snake_segments.pop(0)
 
 	screen.blit(background, (0,0))
-	textbox(font_base,f"Score = {score}", BLACK, (120,355))
+	textbox(font_base,f"Score = {length_snake-1}", BLACK, (120,355))
 	pygame.draw.circle(screen, RED, (food_x,food_y), 10)
 	if x < 10 or x > 390 or y < 10 or y > 310:
 		game_running = False
@@ -130,7 +127,6 @@ while game_running:
 			break
 
 	if x == food_x - 10 and y == food_y - 10:
-		score += 1
 		food_x = random.randrange(20,380, 30)
 		food_y = random.randrange(20, 350, 30)
 		length_snake += 1
@@ -140,7 +136,7 @@ while game_running:
 
 #Death Message Box
 textbox(font_base, "You have lost!", RED, (50,150))
-textbox(font_base, f"Your Score is {score}", RED, (50,200))
+textbox(font_base, f"Your Score is {length_snake-1}", RED, (50,200))
 pygame.display.update()
 time.sleep(2)
 
