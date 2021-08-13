@@ -1,6 +1,8 @@
 import pygame
 import time
+import pandas as pd
 from random import randrange
+
 
 
 #Constants (UPPERCASE NAMES)
@@ -18,7 +20,9 @@ BLACK = (0,0,0)
 BLUE = (29, 140, 204)
 RED = (255,0,0)
 
-
+#Intro
+print("Greetings! Welcome to Edbert Ekaputera's SNAKE GAME")
+name = input("Name = ")
 #2D Gameboard Screen Initiation
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
@@ -44,6 +48,17 @@ font_base = pygame.font.Font(None, 50)
 def textbox(font, txt, colour,pos):
 	text = font.render(txt, True, colour)
 	screen.blit(text, pos)
+
+#HIGHSCORE FUNCTION
+database = pd.read_csv("highscore.csv", sep=";")
+
+def highscore_update(data, score):
+		timestamp = time.strftime("%B %d,%Y, %H:%M:%S", time.localtime())
+		new = {"name" : name,"timestamp" : timestamp,"score" : score}
+		if score >= data["score"].max() or len(data) == 0:
+			data = data.append(new, ignore_index=True, )
+			data = data.sort_values(by=["score"], ascending=False)
+			data[:11].to_csv("highscore.csv", sep=";", index=False)
 
 #SNAKE CLASS
 class Snake:
@@ -169,6 +184,7 @@ textbox(font_base, "You have lost!", RED, (50,150))
 textbox(font_base, f"Your Score is {snake.length-1}", RED, (50,200))
 pygame.display.update()
 time.sleep(2)
+highscore_update(database, snake.length-1)
 
 pygame.quit()
 quit()
