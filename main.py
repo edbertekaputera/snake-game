@@ -42,7 +42,9 @@ for x in range(5, FIELD_WIDTH+5, 30):
 pygame.draw.rect(background, ORANGE, [0,FIELD_HEIGHT+10, SCOREBOARD_WIDTH, SCOREBOARD_HEIGHT])
 
 #Fonts
-font_base = pygame.font.Font(None, 50)
+font_big = pygame.font.Font(None, 50)
+font_medium = pygame.font.Font(None,35)
+
 
 #TEXTBOX FUNCTION
 def textbox(font, txt, colour,pos):
@@ -51,11 +53,12 @@ def textbox(font, txt, colour,pos):
 
 #HIGHSCORE FUNCTION
 database = pd.read_csv("highscore.csv", sep=";")
+highscore = database["score"].max()
 
 def highscore_update(data, score):
 		timestamp = time.strftime("%B %d,%Y, %H:%M:%S", time.localtime())
 		new = {"name" : name,"timestamp" : timestamp,"score" : score}
-		if score >= data["score"].max() or len(data) == 0:
+		if score >= highscore or len(data) == 0:
 			data = data.append(new, ignore_index=True, )
 			data = data.sort_values(by=["score"], ascending=False)
 			data[:11].to_csv("highscore.csv", sep=";", index=False)
@@ -92,7 +95,7 @@ class Snake:
 	
 	def eat_check(self, food):
 		if self.x == food.x - 10 and self.y == food.y - 10:
-			food.reposition()
+			food.reposition(snake=self)
 			self.length += 1
 
 	def move(self):
@@ -132,10 +135,9 @@ class Food:
 	def draw(self):
 		pygame.draw.circle(screen, RED, (self.x,self.y), self.radius)
 
-	def reposition(self):
+	def reposition(self, snake):
 		self.x = randrange(20,380, 30)
 		self.y = randrange(20, 350, 30)
-
 
 #Class initiation
 snake = Snake()
@@ -157,7 +159,8 @@ while game_running:
 	snake.move()
 
 	screen.blit(background, (0,0))
-	textbox(font_base,f"Score = {snake.length-1}", BLACK, (120,355))
+	textbox(font_medium,f"Score = {snake.length-1}", BLACK, (30,360))
+	textbox(font_medium,f"Highscore = {highscore}", BLACK, (200,360))
 	food.draw()	
 
 	#DEATH CONDITION
@@ -180,8 +183,11 @@ while game_running:
 
 
 #Death Message Box
-textbox(font_base, "You have lost!", RED, (50,150))
-textbox(font_base, f"Your Score is {snake.length-1}", RED, (50,200))
+if snake.length-1 > highscore:
+	textbox(font_big, "NEW HIGHSCORE!", RED, (50,150))
+else:
+	textbox(font_big, "You have lost!", RED, (50,150))
+textbox(font_big, f"Your Score is {snake.length-1}", RED, (50,200))
 pygame.display.update()
 time.sleep(2)
 highscore_update(database, snake.length-1)

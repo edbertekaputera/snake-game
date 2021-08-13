@@ -1,5 +1,5 @@
 myenv
 __pycache__
 .DS_Store
-highscore.csv
 *.ipynb
+*.csv
