@@ -19,12 +19,12 @@ ORANGE = (191, 93, 57)
 BLACK = (0,0,0)
 BLUE = (29, 140, 204)
 RED = (255,0,0)
+WHITE = (255,255,255)
+GREY = (192,192,192)
 
-#Intro
-print("Greetings! Welcome to Edbert Ekaputera's SNAKE GAME")
-name = input("Name = ")
 #2D Gameboard Screen Initiation
 pygame.init()
+clock = pygame.time.Clock()
 screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 pygame.display.set_caption("Edbert Ekaputera's Snake Game")
 
@@ -44,7 +44,7 @@ pygame.draw.rect(background, ORANGE, [0,FIELD_HEIGHT+10, SCOREBOARD_WIDTH, SCORE
 #Fonts
 font_big = pygame.font.Font(None, 50)
 font_medium = pygame.font.Font(None,35)
-
+font_verybig = pygame.font.Font(None, 100)
 
 #TEXTBOX FUNCTION
 def textbox(font, txt, colour,pos):
@@ -141,58 +141,142 @@ class Food:
 			self.x = randrange(20,380, 30)
 			self.y = randrange(20, 350, 30)
 
-#Class initiation
-snake = Snake()
-food = Food()
+#Game loop condition
+game_begin = True
 
-#TICKRATE for snake speed
-clock = pygame.time.Clock()
+while game_begin:
+	#Intro
+	name = ""
+	intro_running = True
+	input_rect = pygame.Rect(130,100,250,50)
+	start_rect = pygame.Rect(50, 200, 300, 150)
+	button_color = GREY
+	while intro_running:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				quit()
 
-#Conditions for game to run
-game_running = True
+			if start_rect.collidepoint(pygame.mouse.get_pos()):
+				button_color = LIGHT_GREEN
+			else:
+				button_color = GREY
 
-while game_running:
-	for event in pygame.event.get():
-		if event.type == pygame.QUIT:
-			game_running = False
-		elif event.type == pygame.KEYDOWN:
-			snake.motion_direction(event)
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if start_rect.collidepoint(event.pos) and len(name) > 0:
+					intro_running = False
+					time.sleep(0.5)
+					break
 
-	snake.move()
+			if event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_BACKSPACE:
+					name = name[:-1]
+				elif event.key == pygame.K_RETURN:
+					if len(name) > 0:
+						intro_running = False
+						time.sleep(0.5)
+						break
+				else:
+					if len(name) <= 11:
+						name += event.unicode
 
-	screen.blit(background, (0,0))
-	textbox(font_medium,f"Score = {snake.length-1}", BLACK, (30,360))
-	textbox(font_medium,f"Highscore = {highscore}", BLACK, (200,360))
-	food.draw()	
+		screen.fill(BLACK)
+		pygame.draw.rect(screen, WHITE, input_rect)
+		pygame.draw.rect(screen, button_color, start_rect)
+		textbox(font_big, "What is your name?", WHITE, [35,50])
+		textbox(font_big, "Name:", WHITE, [20,110])
+		textbox(font_verybig, "START", BLACK, [90,250])
+		textbox(font_big, name, BLACK, [135,110])
+		pygame.display.update()
 
-	#DEATH CONDITION
-	if snake.x < 10 or snake.x > 390 or snake.y < 10 or snake.y > 310:
-		game_running = False
-		break
-	else:
-		snake.draw()
+	#Class initiation
+	snake = Snake()
+	food = Food()
 
-	for segment in snake.segments[:-1]:
-		if segment == snake.head:
+	#Conditions for game to run
+	game_running = True
+
+	while game_running:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				game_running = False
+			elif event.type == pygame.KEYDOWN:
+				snake.motion_direction(event)
+
+		snake.move()
+
+		screen.blit(background, (0,0))
+		textbox(font_medium,f"Score = {snake.length-1}", BLACK, (30,360))
+		textbox(font_medium,f"Highscore = {highscore}", BLACK, (200,360))
+		food.draw()	
+
+		#DEATH CONDITION
+		if snake.x < 10 or snake.x > 390 or snake.y < 10 or snake.y > 310:
 			game_running = False
 			break
-	
-	#EAT FOOD CONDITION
-	snake.eat_check(food)
+		else:
+			snake.draw()
 
-	pygame.display.update()
-	clock.tick(snake.speed)
+		for segment in snake.segments[:-1]:
+			if segment == snake.head:
+				game_running = False
+				break
+		
+		#EAT FOOD CONDITION
+		snake.eat_check(food)
+
+		pygame.display.update()
+		clock.tick(snake.speed)
 
 
-#Death Message Box
-if snake.length-1 > highscore:
-	textbox(font_big, "NEW HIGHSCORE!", RED, (50,150))
-else:
-	textbox(font_big, "You have lost!", RED, (50,150))
-textbox(font_big, f"Your Score is {snake.length-1}", RED, (50,200))
-pygame.display.update()
-time.sleep(2)
-highscore_update(database, snake.length-1)
+	#Death Message Box
+	highscore_update(database, snake.length-1)
+	end_running = True
+	quit_color = GREY 
+	again_color = GREY
+	quit_rect = pygame.Rect(50,275,300,75)
+	again_rect = pygame.Rect(50,175,300,75)
+	while end_running:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				quit()
+
+			if quit_rect.collidepoint(pygame.mouse.get_pos()):
+				quit_color = LIGHT_GREEN
+				again_color = GREY
+			elif again_rect.collidepoint(pygame.mouse.get_pos()):
+				quit_color = GREY
+				again_color = LIGHT_GREEN
+			else:
+				quit_color = GREY
+				again_color = GREY
+
+			if event.type == pygame.MOUSEBUTTONDOWN:
+				if quit_rect.collidepoint(event.pos):
+					end_running = False
+					game_begin = False
+					time.sleep(0.5)
+
+				elif again_rect.collidepoint(event.pos):
+					end_running = False
+					game_begin = True
+					time.sleep(0.5)
+
+		screen.fill(BLACK)
+		pygame.draw.rect(screen, quit_color, quit_rect)
+		pygame.draw.rect(screen, again_color, again_rect)
+		textbox(font_big, "PLAY AGAIN", BLACK,[100,200])
+		textbox(font_big, "QUIT GAME", BLACK,[100,300])
+
+		if snake.length-1 > highscore:
+			textbox(font_big, "NEW HIGHSCORE!", RED, (80,50))
+		else:
+			textbox(font_big, "You have lost!", RED, (80,50))
+
+		textbox(font_big, f"Your Score is {snake.length-1}", RED, (75,100))
+		pygame.display.update()
+
 
 pygame.quit()
 quit()
