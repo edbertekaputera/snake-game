@@ -136,8 +136,10 @@ class Food:
 		pygame.draw.circle(screen, RED, (self.x,self.y), self.radius)
 
 	def reposition(self, snake):
-		self.x = randrange(20,380, 30)
-		self.y = randrange(20, 350, 30)
+		while [self.x - 10,self.y - 10] in snake.segments: 
+		#Makes sure food doesn't spawn in body
+			self.x = randrange(20,380, 30)
+			self.y = randrange(20, 350, 30)
 
 #Class initiation
 snake = Snake()
