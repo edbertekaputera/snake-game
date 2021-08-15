@@ -21,6 +21,8 @@ BLUE = (29, 140, 204)
 RED = (255,0,0)
 WHITE = (255,255,255)
 GREY = (192,192,192)
+GOLD = (255,215,0)
+BRONZE = (181, 101, 29)
 
 #2D Gameboard Screen Initiation
 pygame.init()
@@ -234,8 +236,8 @@ while game_begin:
 	end_running = True
 	quit_color = GREY 
 	again_color = GREY
-	quit_rect = pygame.Rect(50,275,300,75)
-	again_rect = pygame.Rect(50,175,300,75)
+	quit_rect = pygame.Rect(40,320,150,45)
+	again_rect = pygame.Rect(210,320,150,45)
 	while end_running:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -263,18 +265,41 @@ while game_begin:
 					game_begin = True
 					time.sleep(0.5)
 
+		database = pd.read_csv("highscore.csv", sep=";")
 		screen.fill(BLACK)
 		pygame.draw.rect(screen, quit_color, quit_rect)
 		pygame.draw.rect(screen, again_color, again_rect)
-		textbox(font_big, "PLAY AGAIN", BLACK,[100,200])
-		textbox(font_big, "QUIT GAME", BLACK,[100,300])
+		textbox(font_medium, "TRY AGAIN", BLACK,[216,330])
+		textbox(font_medium, "QUIT GAME", BLACK,[44,330])
+
+		textbox(font_big, "Leaderboards", LIGHT_GREEN, [80,100])
+		if len(database) >= 1:
+			textbox(font_medium, "01:", GOLD, [60,140])
+			textbox(font_medium, database['name'][0], GOLD, [110,140])
+			textbox(font_medium, str(database['score'][0]), GOLD, [310,140])
+		if len(database) >=2:
+			textbox(font_medium, "02:", GREY, [58,170])
+			textbox(font_medium, database['name'][1], GREY, [110,170])
+			textbox(font_medium, str(database['score'][1]), GREY, [310,170])
+		if len(database) >= 3:
+			textbox(font_medium, "03:", BRONZE, [58,200])
+			textbox(font_medium, database['name'][2], BRONZE, [110,200])
+			textbox(font_medium, str(database['score'][2]), BRONZE, [310,200])
+		if len(database) >= 4:
+			textbox(font_medium, "04:", WHITE, [59,230])
+			textbox(font_medium, database['name'][3], WHITE, [110,230])
+			textbox(font_medium, str(database['score'][3]), WHITE, [310,230])
+		if len(database) >= 5:
+			textbox(font_medium, "05:", WHITE, [57,260])
+			textbox(font_medium, database['name'][4], WHITE, [110,260])
+			textbox(font_medium, str(database['score'][4]), WHITE, [310,260])
 
 		if snake.length-1 > highscore:
-			textbox(font_big, "NEW HIGHSCORE!", RED, (80,50))
+			textbox(font_big, "NEW HIGHSCORE!", RED, (50,25))
 		else:
-			textbox(font_big, "You have lost!", RED, (80,50))
+			textbox(font_big, "You have lost!", RED, (80,25))
 
-		textbox(font_big, f"Your Score is {snake.length-1}", RED, (75,100))
+		textbox(font_medium, f"Your Score is {snake.length-1}", RED, (110,60))
 		pygame.display.update()
 
 
