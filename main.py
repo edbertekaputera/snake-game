@@ -60,7 +60,12 @@ highscore = database["score"].max()
 def highscore_update(data, score):
 		timestamp = time.strftime("%B %d,%Y, %H:%M:%S", time.localtime())
 		new = {"name" : name,"timestamp" : timestamp,"score" : score}
-		if score >= highscore or len(data) == 0:
+		if len(data) <= 5:
+			data = data.append(new, ignore_index=True, )
+			data = data.sort_values(by=["score"], ascending=False)
+			data[:11].to_csv("highscore.csv", sep=";", index=False)
+
+		elif score >= database["score"][4]:
 			data = data.append(new, ignore_index=True, )
 			data = data.sort_values(by=["score"], ascending=False)
 			data[:11].to_csv("highscore.csv", sep=";", index=False)
