@@ -55,7 +55,10 @@ def textbox(font, txt, colour,pos):
 
 #HIGHSCORE FUNCTION
 database = pd.read_csv("highscore.csv", sep=";")
-highscore = database["score"].max()
+if database.empty:
+	highscore = 0
+else:
+	highscore = database["score"].max()
 
 def highscore_update(data, score):
 		timestamp = time.strftime("%B %d,%Y, %H:%M:%S", time.localtime())
