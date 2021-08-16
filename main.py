@@ -55,7 +55,7 @@ def textbox(font, txt, colour,pos):
 
 #HIGHSCORE FUNCTION
 database = pd.read_csv("highscore.csv", sep=";")
-if database.empty:
+if database.empty == True:
 	highscore = 0
 else:
 	highscore = database["score"].max()
