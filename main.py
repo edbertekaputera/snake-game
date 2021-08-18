@@ -54,24 +54,18 @@ def textbox(font, txt, colour,pos):
 	screen.blit(text, pos)
 
 #HIGHSCORE FUNCTION
-database = pd.read_csv("highscore.csv", sep=";")
-if database.empty == True:
-	highscore = 0
-else:
-	highscore = database["score"].max()
-
 def highscore_update(data, score):
 		timestamp = time.strftime("%B %d,%Y, %H:%M:%S", time.localtime())
 		new = {"name" : name,"timestamp" : timestamp,"score" : score}
 		if len(data) <= 5:
 			data = data.append(new, ignore_index=True, )
 			data = data.sort_values(by=["score"], ascending=False)
-			data[:11].to_csv("highscore.csv", sep=";", index=False)
+			data[:11].to_csv("highscore.csv", index=False)
 
 		elif score >= database["score"][4]:
 			data = data.append(new, ignore_index=True, )
 			data = data.sort_values(by=["score"], ascending=False)
-			data[:11].to_csv("highscore.csv", sep=";", index=False)
+			data[:11].to_csv("highscore.csv", index=False)
 
 #SNAKE CLASS
 class Snake:
@@ -155,6 +149,12 @@ class Food:
 game_begin = True
 
 while game_begin:
+	database = pd.read_csv("highscore.csv")
+	if database.empty == True:
+		highscore = 0
+	else:
+		highscore = database["score"].max()
+
 	#Intro
 	name = ""
 	intro_running = True
@@ -241,6 +241,7 @@ while game_begin:
 
 	#Death Message Box
 	highscore_update(database, snake.length-1)
+	database = pd.read_csv("highscore.csv")
 	end_running = True
 	quit_color = GREY 
 	again_color = GREY
@@ -273,7 +274,6 @@ while game_begin:
 					game_begin = True
 					time.sleep(0.5)
 
-		database = pd.read_csv("highscore.csv", sep=";")
 		screen.fill(BLACK)
 		pygame.draw.rect(screen, quit_color, quit_rect)
 		pygame.draw.rect(screen, again_color, again_rect)
