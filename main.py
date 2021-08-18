@@ -209,7 +209,8 @@ while game_begin:
 	while game_running:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
-				game_running = False
+				pygame.quit()
+				quit()
 			elif event.type == pygame.KEYDOWN:
 				snake.motion_direction(event)
 
