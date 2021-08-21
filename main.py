@@ -3,8 +3,6 @@ import time
 import pandas as pd
 from random import randrange
 
-
-
 #Constants (UPPERCASE NAMES)
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 400
@@ -48,15 +46,17 @@ font_big = pygame.font.Font(None, 50)
 font_medium = pygame.font.Font(None,35)
 font_verybig = pygame.font.Font(None, 100)
 
+
 #TEXTBOX FUNCTION
 def textbox(font, txt, colour,pos):
 	text = font.render(txt, True, colour)
 	screen.blit(text, pos)
 
+
 #HIGHSCORE FUNCTION
 def highscore_update(data, score):
 		timestamp = time.strftime("%B %d,%Y, %H:%M:%S", time.localtime())
-		new = {"name" : name,"timestamp" : timestamp,"score" : score}
+		new = {"name": name,"timestamp": timestamp,"score": score}
 		if len(data) <= 5:
 			data = data.append(new, ignore_index=True, )
 			data = data.sort_values(by=["score"], ascending=False)
@@ -66,6 +66,7 @@ def highscore_update(data, score):
 			data = data.append(new, ignore_index=True, )
 			data = data.sort_values(by=["score"], ascending=False)
 			data[:11].to_csv("highscore.csv", index=False)
+
 
 #SNAKE CLASS
 class Snake:
@@ -115,7 +116,7 @@ class Snake:
 			self.x_change = -30
 			self.y_change = 0
 			self.direction = "left"
-		elif event.key == pygame.K_RIGHT and self.direction !="left":
+		elif event.key == pygame.K_RIGHT and self.direction != "left":
 			self.x_change = 30
 			self.y_change = 0
 			self.direction = "right"
@@ -128,8 +129,9 @@ class Snake:
 			self.y_change = 30
 			self.direction = "down"
 
+
 #FOOD CLASS
-class Food:
+class Food:   
 	def __init__(self):
 		#Properties of food
 		self.x = randrange(20,380, 30)
@@ -145,12 +147,13 @@ class Food:
 			self.x = randrange(20,380, 30)
 			self.y = randrange(20, 350, 30)
 
+
 #Game loop condition
 game_begin = True
 
 while game_begin:
 	database = pd.read_csv("highscore.csv")
-	if database.empty == True:
+	if database.empty:
 		highscore = 0
 	else:
 		highscore = database["score"].max()
@@ -239,7 +242,6 @@ while game_begin:
 		pygame.display.update()
 		clock.tick(snake.speed)
 
-
 	#Death Message Box
 	highscore_update(database, snake.length-1)
 	database = pd.read_csv("highscore.csv")
@@ -286,7 +288,7 @@ while game_begin:
 			textbox(font_medium, "01:", GOLD, [60,140])
 			textbox(font_medium, database['name'][0], GOLD, [110,140])
 			textbox(font_medium, str(database['score'][0]), GOLD, [310,140])
-		if len(database) >=2:
+		if len(database) >= 2:
 			textbox(font_medium, "02:", GREY, [58,170])
 			textbox(font_medium, database['name'][1], GREY, [110,170])
 			textbox(font_medium, str(database['score'][1]), GREY, [310,170])
